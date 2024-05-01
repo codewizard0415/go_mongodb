@@ -20,6 +20,7 @@ import (
 var userCollection = db.Db().Database("admin").Collection("gofirst") // mongodb client instance
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("backend1 received POST request")
 	var person models.User // variable of type User in mongodb
 	defer r.Body.Close()   // Close the request body ater reading is done
 	err := r.ParseForm()
@@ -45,7 +46,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	person.ID = insertResult.InsertedID.(primitive.ObjectID)
 	// return to response object
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

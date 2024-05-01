@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,7 +19,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var userCollection = db.Db().Database("admin").Collection("gofirst") // mongodb client instance
+var userCollection = db.Db().Database("admin").Collection("gosecond") // mongodb client instance
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var person models.User // variable of type User in mongodb
@@ -36,6 +38,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid age", http.StatusBadRequest)
 		return
 	}
+
 	person.ID = primitive.NewObjectID()
 	person.Age = ageInt
 	person.Gender = gender
@@ -45,7 +48,24 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	person.ID = insertResult.InsertedID.(primitive.ObjectID)
+
+	//Post to localhost:9000
+	backend1 := "http://localhost:9000/api/create"
+	jsonData, _ := json.Marshal(person)
+	res, err11 := http.Post(backend1, "application/json", bytes.NewBuffer(jsonData))
+	if err11 != nil {
+		fmt.Println("Error creating POST request", err11)
+	} else {
+		body, _ := io.ReadAll(res.Body)
+		fmt.Println("POST response: ", string(body))
+	}
+	// resp, err := http.Get("http://localhost:9000/api/users")
+	// if err != nil {
+
+	// } else {
+	// 	body, _ := io.ReadAll(resp.Body)
+	// 	fmt.Println("Get response: ", string(body))
+	// }
 	// return to response object
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

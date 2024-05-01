@@ -19,5 +19,5 @@ func main() {
 	s.HandleFunc("/user/{id}", controllers.UpdateUser).Methods("PUT")
 	s.HandleFunc("/users", controllers.GetUsers).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":9000", s))
+	log.Fatal(http.ListenAndServe(":9001", s))
 }
