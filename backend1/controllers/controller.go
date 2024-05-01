@@ -51,7 +51,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, "Inserted user with id: ", insertResult.InsertedID, "\n")
 	json.NewEncoder(w).Encode(person)
-
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
